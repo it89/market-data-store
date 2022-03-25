@@ -1,3 +1,6 @@
+server:
+  port: 8101
+
 tcs:
   api:
     token: ${TCS_INVEST_API_TOKEN}
