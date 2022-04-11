@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.tinkoff.piapi.core.InstrumentsService;
 import ru.tinkoff.piapi.core.InvestApi;
+import ru.tinkoff.piapi.core.MarketDataService;
 
 @Configuration
 public class TcsApiConfig {
@@ -16,5 +17,10 @@ public class TcsApiConfig {
     @Bean
     public InstrumentsService investApiInstrumentsService(InvestApi investApi) {
         return investApi.getInstrumentsService();
+    }
+
+    @Bean
+    public MarketDataService marketDataService(InvestApi investApi) {
+        return investApi.getMarketDataService();
     }
 }
