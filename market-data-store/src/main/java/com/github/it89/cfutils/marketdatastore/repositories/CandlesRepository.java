@@ -12,4 +12,6 @@ import java.util.List;
 public interface CandlesRepository extends CrudRepository<CandleEntity, Long> {
     List<CandleEntity> getAllByFigiAndDurationAndOpenTimeBetween(
             String figi, Duration duration, Instant from, Instant to);
+
+    List<CandleEntity> getAllByFigi(String figi);
 }
