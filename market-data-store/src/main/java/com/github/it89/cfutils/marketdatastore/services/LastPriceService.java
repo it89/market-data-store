@@ -2,7 +2,7 @@ package com.github.it89.cfutils.marketdatastore.services;
 
 import com.github.it89.cfutils.marketdatastore.entities.LastPriceEntity;
 import com.github.it89.cfutils.marketdatastore.models.LastPrice;
-import com.github.it89.cfutils.marketdatastore.repositories.LastPriceRepostiory;
+import com.github.it89.cfutils.marketdatastore.repositories.LastPriceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class LastPriceService {
-    private final LastPriceRepostiory lastPriceRepostiory;
+    private final LastPriceRepository lastPriceRepostiory;
 
     @Transactional
     public void upload(Map<String, LastPrice> figiLastPriceMap) {
