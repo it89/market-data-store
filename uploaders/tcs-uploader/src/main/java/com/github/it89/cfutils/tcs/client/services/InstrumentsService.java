@@ -18,4 +18,9 @@ public class InstrumentsService {
         List<Instrument> instruments = tcsInstrumentsService.getIAllCurrencies();
         instrumentsFeignClient.upload(instruments);
     }
+
+    public void uploadShares() {
+        List<Instrument> instruments = tcsInstrumentsService.getAllShares();
+        instrumentsFeignClient.upload(instruments);
+    }
 }

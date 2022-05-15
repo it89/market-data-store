@@ -16,4 +16,9 @@ public class InstrumentsController {
     public void uploadCurrencies() {
         instrumentsService.uploadCurrencies();
     }
+
+    @PostMapping("/shares/upload")
+    public void uploadShares() {
+        instrumentsService.uploadShares();
+    }
 }
