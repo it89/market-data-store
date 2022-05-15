@@ -1,6 +1,7 @@
 package com.github.it89.cfutils.tcs.client.tcs;
 
 import com.github.it89.cfutils.tcs.client.store.dto.Candle;
+import com.github.it89.cfutils.tcs.client.store.dto.LastPrice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,8 @@ import ru.tinkoff.piapi.core.MarketDataService;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,5 +28,15 @@ public class TcsMarketDataService {
         return candles.stream()
                 .map(CandlesConverter::historicCandleToDayCandle)
                 .collect(Collectors.toList());
+    }
+
+    public Map<String, LastPrice> getLastPrices(Set<String> figiSet) {
+        log.info("Get last prices from TCS for figi {})", figiSet);
+        var lastPrices = marketDataService.getLastPricesSync(figiSet);
+
+        return lastPrices.stream()
+                .collect(Collectors.toUnmodifiableMap(
+                        ru.tinkoff.piapi.contract.v1.LastPrice::getFigi,
+                        LastPriceConverter::toDto));
     }
 }
