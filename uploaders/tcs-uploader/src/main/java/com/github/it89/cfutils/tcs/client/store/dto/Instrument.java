@@ -13,4 +13,5 @@ public class Instrument {
     private String ticker;
     private String name;
     private Currency currency;
+    private InstrumentType type;
 }

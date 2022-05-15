@@ -60,5 +60,6 @@ public class InstrumentsService {
         entity.setTicker(instrument.getTicker());
         entity.setName(instrument.getName());
         entity.setCurrency(instrument.getCurrency());
+        entity.setType(instrument.getType());
     }
 }
