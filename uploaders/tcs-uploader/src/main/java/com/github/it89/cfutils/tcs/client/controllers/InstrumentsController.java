@@ -25,4 +25,10 @@ public class InstrumentsController {
     public void uploadShares() {
         instrumentsService.uploadShares();
     }
+
+    @PostMapping("/bonds/upload")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void uploadBonds() {
+        instrumentsService.uploadBonds();
+    }
 }

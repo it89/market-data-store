@@ -11,7 +11,7 @@ import java.util.Set;
 @Repository
 public interface BondAciRepository extends CrudRepository<BondAciValuesEntity, Long> {
 
-    @Query(value = "select t.id, t.figi, t.aci_value, t.time " +
+    @Query(value = "select t.id, t.figi, t.aci_value, t.currency, t.time " +
             "from (select t.*, row_number() over (partition by t.figi order by t.time desc) rn " +
             "      from bond_aci_values t " +
             "      where t.figi in (:figiSet)) t " +
