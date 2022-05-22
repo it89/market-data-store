@@ -10,4 +10,5 @@ import java.util.Set;
 @Repository
 public interface InstrumentsRepository extends CrudRepository<InstrumentEntity, String> {
     List<InstrumentEntity> getAllByFigiIn(Set<String> figiSet);
+    List<InstrumentEntity> getAllByIsinIn(Set<String> isinSet);
 }
