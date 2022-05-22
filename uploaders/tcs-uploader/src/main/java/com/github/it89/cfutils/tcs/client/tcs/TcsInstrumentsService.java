@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.Bond;
 import ru.tinkoff.piapi.contract.v1.Currency;
+import ru.tinkoff.piapi.contract.v1.Etf;
 import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InstrumentsService;
 
@@ -40,6 +41,14 @@ public class TcsInstrumentsService {
         final List<Bond> allBonds = investApiInstrumentsService.getAllBondsSync();
         return allBonds.stream()
                 .map(InstrumentsConverter::bondToBondInstrument)
+                .collect(Collectors.toList());
+    }
+
+    public List<Instrument> getAllEtfs() {
+        log.info("Get ETF from TCS");
+        final List<Etf> allEtfs = investApiInstrumentsService.getAllEtfsSync();
+        return allEtfs.stream()
+                .map(InstrumentsConverter::etfToInstrument)
                 .collect(Collectors.toList());
     }
 }
