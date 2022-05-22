@@ -2,6 +2,7 @@ package com.github.it89.cfutils.marketdatastore.services;
 
 import com.github.it89.cfutils.marketdatastore.entities.BondAciValuesEntity;
 import com.github.it89.cfutils.marketdatastore.models.BondInfo;
+import com.github.it89.cfutils.marketdatastore.models.MonetaryAmount;
 import com.github.it89.cfutils.marketdatastore.repositories.BondAciRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +25,15 @@ public class BondAciService {
                 .collect(Collectors.toUnmodifiableMap(BondAciValuesEntity::getFigi, v -> v));
 
         figiBondInfoMap.forEach((k, v) -> upload(k, v, figiEntityMap));
+    }
+
+    public Map<String, MonetaryAmount> getAmount(Set<String> figiSet) {
+        return bondAciRepository.getLastAciValues(figiSet).stream()
+                .collect(Collectors.toUnmodifiableMap(
+                                BondAciValuesEntity::getFigi,
+                                v -> new MonetaryAmount(v.getAciValue(), v.getCurrency())
+                        )
+                );
     }
 
     private void upload(String figi, BondInfo bondInfo, Map<String, BondAciValuesEntity> figiEntityMap) {
