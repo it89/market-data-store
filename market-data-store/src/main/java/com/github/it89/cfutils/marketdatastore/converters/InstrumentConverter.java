@@ -13,6 +13,7 @@ public class InstrumentConverter {
                 .ticker(entity.getTicker())
                 .name(entity.getName())
                 .currency(entity.getCurrency())
+                .type(entity.getType())
                 .build();
     }
 }
