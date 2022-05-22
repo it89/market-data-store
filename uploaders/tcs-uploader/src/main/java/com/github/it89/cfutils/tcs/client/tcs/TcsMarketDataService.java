@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,6 +33,9 @@ public class TcsMarketDataService {
     }
 
     public Map<String, LastPrice> getLastPrices(Set<String> figiSet) {
+        if (isEmpty(figiSet)) {
+            return Map.of();
+        }
         log.info("Get last prices from TCS for figi {})", figiSet);
         var lastPrices = marketDataService.getLastPricesSync(figiSet);
 

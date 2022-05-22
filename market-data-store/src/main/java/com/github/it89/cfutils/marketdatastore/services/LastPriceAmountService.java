@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +28,6 @@ public class LastPriceAmountService {
     private final LastPriceRepository lastPriceRepostiory;
     private final InstrumentsRepository instrumentsRepository;
     private final BondNominalRepository bondNominalRepository;
-
-    private static final MathContext MONEY_MATH_CONTEXT = new MathContext(2, RoundingMode.HALF_UP);
 
     @Transactional
     public Map<String, MonetaryAmount> getAmount(Set<String> figiSet) {
@@ -78,7 +75,9 @@ public class LastPriceAmountService {
             return null;
         }
         BondNominalValueEntity bondNominalEntity = figiBondNominalMap.get(figi);
-        BigDecimal value = pricePct.multiply(bondNominalEntity.getNominalValue()).round(MONEY_MATH_CONTEXT);
+        BigDecimal value = pricePct
+                .multiply(bondNominalEntity.getNominalValue())
+                .divide(BigDecimal.valueOf(100), MathContext.UNLIMITED);
         Currency currency = bondNominalEntity.getCurrency();
         return new MonetaryAmount(value, currency);
     }

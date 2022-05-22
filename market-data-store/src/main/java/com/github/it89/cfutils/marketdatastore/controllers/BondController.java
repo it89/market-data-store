@@ -1,6 +1,7 @@
 package com.github.it89.cfutils.marketdatastore.controllers;
 
 import com.github.it89.cfutils.marketdatastore.models.BondInfo;
+import com.github.it89.cfutils.marketdatastore.models.MonetaryAmount;
 import com.github.it89.cfutils.marketdatastore.services.BondAciService;
 import com.github.it89.cfutils.marketdatastore.services.BondNominalService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/bonds")
@@ -25,5 +27,10 @@ public class BondController {
     public void upload(@RequestBody Map<String, BondInfo> figiBondInfoMap) {
         bondNominalService.upload(figiBondInfoMap);
         bondAciService.upload(figiBondInfoMap);
+    }
+
+    @PostMapping("/getAci")
+    public Map<String, MonetaryAmount> getAmount(@RequestBody Set<String> figiSet) {
+        return bondAciService.getAmount(figiSet);
     }
 }
