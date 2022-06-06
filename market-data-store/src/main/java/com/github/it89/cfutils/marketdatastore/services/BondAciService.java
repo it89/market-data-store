@@ -1,6 +1,7 @@
 package com.github.it89.cfutils.marketdatastore.services;
 
 import com.github.it89.cfutils.marketdatastore.entities.BondAciValuesEntity;
+import com.github.it89.cfutils.marketdatastore.models.AmountInfo;
 import com.github.it89.cfutils.marketdatastore.models.BondInfo;
 import com.github.it89.cfutils.marketdatastore.models.MonetaryAmount;
 import com.github.it89.cfutils.marketdatastore.repositories.BondAciRepository;
@@ -27,11 +28,11 @@ public class BondAciService {
         figiBondInfoMap.forEach((k, v) -> upload(k, v, figiEntityMap));
     }
 
-    public Map<String, MonetaryAmount> getAmount(Set<String> figiSet) {
+    public Map<String, AmountInfo> getAmount(Set<String> figiSet) {
         return bondAciRepository.getLastAciValues(figiSet).stream()
                 .collect(Collectors.toUnmodifiableMap(
                                 BondAciValuesEntity::getFigi,
-                                v -> new MonetaryAmount(v.getAciValue(), v.getCurrency())
+                                v -> new AmountInfo(new MonetaryAmount(v.getAciValue(), v.getCurrency()), v.getTime())
                         )
                 );
     }

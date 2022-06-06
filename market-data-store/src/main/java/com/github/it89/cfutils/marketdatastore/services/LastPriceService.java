@@ -1,7 +1,7 @@
 package com.github.it89.cfutils.marketdatastore.services;
 
 import com.github.it89.cfutils.marketdatastore.entities.LastPriceEntity;
-import com.github.it89.cfutils.marketdatastore.models.LastPrice;
+import com.github.it89.cfutils.marketdatastore.models.PriceInfo;
 import com.github.it89.cfutils.marketdatastore.repositories.LastPriceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,14 +18,14 @@ public class LastPriceService {
     private final LastPriceRepository lastPriceRepostiory;
 
     @Transactional
-    public void upload(Map<String, LastPrice> figiLastPriceMap) {
+    public void upload(Map<String, PriceInfo> figiLastPriceMap) {
         Map<String, LastPriceEntity> figiEntityMap = lastPriceRepostiory.getLastPrices(figiLastPriceMap.keySet()).stream()
                 .collect(Collectors.toUnmodifiableMap(LastPriceEntity::getFigi, v -> v));
 
         figiLastPriceMap.forEach((k, v) -> upload(k, v, figiEntityMap));
     }
 
-    private void upload(String figi, LastPrice lastPrice, Map<String, LastPriceEntity> figiEntityMap) {
+    private void upload(String figi, PriceInfo lastPrice, Map<String, LastPriceEntity> figiEntityMap) {
         if (figiEntityMap.containsKey(figi)) {
             update(figiEntityMap.get(figi), lastPrice);
         } else {
@@ -33,7 +33,7 @@ public class LastPriceService {
         }
     }
 
-    private void update(LastPriceEntity entity, LastPrice lastPrice) {
+    private void update(LastPriceEntity entity, PriceInfo lastPrice) {
         if (lastPrice.getTime().isBefore(entity.getTime())) {
             log.warn("Last time={} for figi={} is before then current time={}",
                     lastPrice.getTime(), entity.getFigi(), entity.getTime());
@@ -50,7 +50,7 @@ public class LastPriceService {
         }
     }
 
-    private void create(String figi, LastPrice lastPrice) {
+    private void create(String figi, PriceInfo lastPrice) {
         LastPriceEntity entity = new LastPriceEntity();
         entity.setFigi(figi);
         entity.setPrice(lastPrice.getPrice());

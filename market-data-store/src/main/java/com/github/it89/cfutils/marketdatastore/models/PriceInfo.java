@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 @Data
-public class LastPrice {
+public class PriceInfo {
     private BigDecimal price;
     private Instant time;
 }

@@ -1,7 +1,7 @@
 package com.github.it89.cfutils.marketdatastore.controllers;
 
+import com.github.it89.cfutils.marketdatastore.models.AmountInfo;
 import com.github.it89.cfutils.marketdatastore.models.BondInfo;
-import com.github.it89.cfutils.marketdatastore.models.MonetaryAmount;
 import com.github.it89.cfutils.marketdatastore.services.BondAciService;
 import com.github.it89.cfutils.marketdatastore.services.BondNominalService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class BondController {
     }
 
     @PostMapping("/getAci")
-    public Map<String, MonetaryAmount> getAmount(@RequestBody Set<String> figiSet) {
+    public Map<String, AmountInfo> getAmount(@RequestBody Set<String> figiSet) {
         return bondAciService.getAmount(figiSet);
     }
 }
