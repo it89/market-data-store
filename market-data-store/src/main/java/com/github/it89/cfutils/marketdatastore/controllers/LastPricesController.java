@@ -1,7 +1,7 @@
 package com.github.it89.cfutils.marketdatastore.controllers;
 
-import com.github.it89.cfutils.marketdatastore.models.LastPrice;
-import com.github.it89.cfutils.marketdatastore.models.MonetaryAmount;
+import com.github.it89.cfutils.marketdatastore.models.AmountInfo;
+import com.github.it89.cfutils.marketdatastore.models.PriceInfo;
 import com.github.it89.cfutils.marketdatastore.services.LastPriceAmountService;
 import com.github.it89.cfutils.marketdatastore.services.LastPriceService;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +24,12 @@ public class LastPricesController {
 
     @PostMapping("/upload")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void upload(@RequestBody Map<String, LastPrice> figiLastPriceMap) {
+    public void upload(@RequestBody Map<String, PriceInfo> figiLastPriceMap) {
         lastPriceService.upload(figiLastPriceMap);
     }
 
     @PostMapping("/getAmount")
-    public Map<String, MonetaryAmount> getAmount(@RequestBody Set<String> figiSet) {
+    public Map<String, AmountInfo> getAmount(@RequestBody Set<String> figiSet) {
         return lastPriceAmountService.getAmount(figiSet);
     }
 }
