@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(value = "dataMarketInstruments", url = "localhost:8100/instruments")
+@FeignClient(value = "dataMarketInstruments", url = "${api-gateway-url}/marketDataStore/instruments")
 public interface InstrumentsFeignClient {
     @PostMapping("/upload")
     List<Instrument> upload(@RequestBody List<Instrument> instruments);
