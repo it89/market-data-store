@@ -1,6 +1,18 @@
 server:
   port: 8101
-
+spring:
+  application:
+    name: market-data-tcs-uploader
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+api-gateway-url: ${API_GATEWAY_URL:http://localhost:8080}
 tcs:
   api:
-    token: ${TCS_INVEST_API_TOKEN}
+    token: ${TINKOFF_API_TOKEN}

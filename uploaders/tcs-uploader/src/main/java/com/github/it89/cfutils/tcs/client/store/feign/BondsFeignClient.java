@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@FeignClient(value = "dataMarketBonds", url = "localhost:8100/bonds")
+@FeignClient(value = "dataMarketBonds", url = "${api-gateway-url}/marketDataStore/bonds")
 public interface BondsFeignClient {
     @PostMapping("/upload")
     void upload(@RequestBody Map<String, BondInfo> figiBondInfoMap);

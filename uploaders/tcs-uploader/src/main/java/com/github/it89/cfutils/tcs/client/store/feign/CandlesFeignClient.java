@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.Duration;
 import java.util.List;
 
-@FeignClient(value = "dataMarketCandles", url = "localhost:8100/candles")
+@FeignClient(value = "dataMarketCandles", url = "${api-gateway-url}/marketDataStore/candles")
 public interface CandlesFeignClient {
     @PostMapping("/{figi}/upload")
     void upload(@PathVariable String figi,

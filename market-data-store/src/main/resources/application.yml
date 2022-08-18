@@ -2,8 +2,10 @@ server:
   port: 8100
 
 spring:
+  application:
+    name: market-data-store
   datasource:
-    url: jdbc:postgresql://localhost:5433/market_data_store
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/market_data_store}
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -17,3 +19,13 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info"
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+api-gateway-url: ${API_GATEWAY_URL:http://localhost:8080}

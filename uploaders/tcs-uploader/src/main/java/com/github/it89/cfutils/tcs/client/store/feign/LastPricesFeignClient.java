@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@FeignClient(value = "dataMarketLastPrices", url = "localhost:8100/lastPrices")
+@FeignClient(value = "dataMarketLastPrices", url = "${api-gateway-url}/marketDataStore/lastPrices")
 public interface LastPricesFeignClient {
     @PostMapping("/upload")
     void upload(@RequestBody Map<String, LastPrice> figiLastPriceMap);
