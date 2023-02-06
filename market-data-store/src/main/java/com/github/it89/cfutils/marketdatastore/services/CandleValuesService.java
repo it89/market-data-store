@@ -1,7 +1,10 @@
 package com.github.it89.cfutils.marketdatastore.services;
 
 import com.github.it89.cfutils.marketdatastore.entities.CandleEntity;
+import com.github.it89.cfutils.marketdatastore.entities.InstrumentEntity;
+import com.github.it89.cfutils.marketdatastore.exceptions.InstrumentNotFoundException;
 import com.github.it89.cfutils.marketdatastore.repositories.CandlesRepository;
+import com.github.it89.cfutils.marketdatastore.repositories.InstrumentsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +18,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CandleValuesService {
     private final CandlesRepository candlesRepository;
+    private final InstrumentsRepository instrumentsRepository;
 
     public SortedMap<Instant, BigDecimal> getValues(String figi) {
-        var map = candlesRepository.getAllByFigi(figi).stream()
+        InstrumentEntity instrumentEntity = instrumentsRepository.findFirstByFigi(figi)
+                .orElseThrow(InstrumentNotFoundException::new);
+
+        var map = candlesRepository.getAllByInstrument(instrumentEntity).stream()
                 .collect(Collectors.toMap(CandleEntity::getOpenTime, CandleEntity::getOpen));
 
         return new TreeMap<>(map);

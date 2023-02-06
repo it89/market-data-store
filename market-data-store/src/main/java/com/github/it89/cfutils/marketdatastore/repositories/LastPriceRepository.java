@@ -11,11 +11,11 @@ import java.util.Set;
 @Repository
 public interface LastPriceRepository extends CrudRepository<LastPriceEntity, Long> {
 
-    @Query(value = "select p.id, p.figi, p.price, p.time " +
-            "from (select p.*, row_number() over (partition by p.figi order by p.time desc) rn " +
+    @Query(value = "select p.id, p.instrument_id, p.price, p.time " +
+            "from (select p.*, row_number() over (partition by p.instrument_id order by p.time desc) rn " +
             "      from last_prices p " +
-            "      where p.figi in (:figiSet)) p " +
+            "      where p.instrument_id in (:instrumentIds)) p " +
             "where p.rn = 1",
             nativeQuery = true)
-    List<LastPriceEntity> getLastPrices(Set<String> figiSet);
+    List<LastPriceEntity> getLastPrices(Set<Long> instrumentIds);
 }

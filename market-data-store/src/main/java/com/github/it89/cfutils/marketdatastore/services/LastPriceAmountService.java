@@ -1,9 +1,11 @@
 package com.github.it89.cfutils.marketdatastore.services;
 
+import com.github.it89.cfutils.marketdatastore.converters.InstrumentConverter;
 import com.github.it89.cfutils.marketdatastore.entities.BondNominalValueEntity;
 import com.github.it89.cfutils.marketdatastore.entities.InstrumentEntity;
 import com.github.it89.cfutils.marketdatastore.entities.LastPriceEntity;
 import com.github.it89.cfutils.marketdatastore.models.AmountInfo;
+import com.github.it89.cfutils.marketdatastore.models.Instrument;
 import com.github.it89.cfutils.marketdatastore.models.InstrumentType;
 import com.github.it89.cfutils.marketdatastore.models.MonetaryAmount;
 import com.github.it89.cfutils.marketdatastore.repositories.BondNominalRepository;
@@ -18,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,61 +29,62 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class LastPriceAmountService {
-    private final LastPriceRepository lastPriceRepostiory;
+    private final LastPriceRepository lastPriceRepository;
     private final InstrumentsRepository instrumentsRepository;
     private final BondNominalRepository bondNominalRepository;
 
     @Transactional
-    public Map<String, AmountInfo> getAmount(Set<String> figiSet) {
-        Map<String, LastPriceEntity> figiLastPriceEntityMap = lastPriceRepostiory.getLastPrices(figiSet).stream()
-                .collect(Collectors.toUnmodifiableMap(LastPriceEntity::getFigi, v -> v));
+    public Map<Instrument, AmountInfo> getAmount(Set<String> figiSet) {
+        List<InstrumentEntity> instrumentEntities = instrumentsRepository.findAllByFigiIn(figiSet);
 
-        Map<String, InstrumentEntity> figiInstrumentMap = instrumentsRepository.getAllByFigiIn(figiSet).stream()
-                .collect(Collectors.toUnmodifiableMap(InstrumentEntity::getFigi, v -> v));
+        Set<Long> instrumentIds = instrumentEntities.stream()
+                .map(InstrumentEntity::getId)
+                .collect(Collectors.toSet());
 
-        Map<String, BondNominalValueEntity> figiBondNominalMap = bondNominalRepository.getLastNominalValues(figiSet).stream()
-                .collect(Collectors.toUnmodifiableMap(BondNominalValueEntity::getFigi, v -> v));
+        Map<Long, LastPriceEntity> lastPriceMap = lastPriceRepository.getLastPrices(instrumentIds).stream()
+                .collect(Collectors.toMap(p -> p.getInstrument().getId(), p -> p));
 
-        Map<String, AmountInfo> result = new HashMap<>();
-        figiSet.forEach(it -> result.put(
-                it,
-                getMonetaryAmount(it, figiLastPriceEntityMap, figiInstrumentMap, figiBondNominalMap)));
+
+        Map<Long, BondNominalValueEntity> bondNominalMap =
+                bondNominalRepository.getLastNominalValues(instrumentIds).stream()
+                        .collect(Collectors.toUnmodifiableMap(k -> k.getInstrument().getId(), v -> v));
+
+        Map<Instrument, AmountInfo> result = new HashMap<>();
+        instrumentEntities.forEach(it -> result.put(
+                InstrumentConverter.entityToDto(it),
+                getMonetaryAmount(it, lastPriceMap, bondNominalMap)));
 
         return result;
     }
 
     private AmountInfo getMonetaryAmount(
-            String figi,
-            Map<String, LastPriceEntity> figiLastPriceEntityMap,
-            Map<String, InstrumentEntity> figiInstrumentMap,
-            Map<String, BondNominalValueEntity> figiBondNominalMap) {
-        if (!figiLastPriceEntityMap.containsKey(figi)) {
-            return null;
-        }
-        if (!figiInstrumentMap.containsKey(figi)) {
+            InstrumentEntity instrumentEntity,
+            Map<Long, LastPriceEntity> lastPriceEntityMap,
+            Map<Long, BondNominalValueEntity> bondNominalMap) {
+        if (!lastPriceEntityMap.containsKey(instrumentEntity.getId())) {
             return null;
         }
 
-        InstrumentEntity instrument = figiInstrumentMap.get(figi);
-        if (InstrumentType.BOND.equals(instrument.getType())) {
-            return getBondNominalAmount(figi, figiLastPriceEntityMap.get(figi), figiBondNominalMap);
+        if (InstrumentType.BOND.equals(instrumentEntity.getType())) {
+            return getBondNominalAmount(instrumentEntity.getId(), lastPriceEntityMap.get(
+                    instrumentEntity.getId()), bondNominalMap);
         } else {
-            LastPriceEntity price = figiLastPriceEntityMap.get(figi);
+            LastPriceEntity price = lastPriceEntityMap.get(instrumentEntity.getId());
 
             return new AmountInfo(
-                    new MonetaryAmount(price.getPrice(), instrument.getCurrency()),
+                    new MonetaryAmount(price.getPrice(), instrumentEntity.getCurrency()),
                     price.getTime()
             );
         }
     }
 
-    private AmountInfo getBondNominalAmount(String figi,
+    private AmountInfo getBondNominalAmount(long instrumentId,
                                             LastPriceEntity lastPrice,
-                                            Map<String, BondNominalValueEntity> figiBondNominalMap) {
-        if (!figiBondNominalMap.containsKey(figi)) {
+                                            Map<Long, BondNominalValueEntity> instrumentIdBondNominalMap) {
+        if (!instrumentIdBondNominalMap.containsKey(instrumentId)) {
             return null;
         }
-        BondNominalValueEntity bondNominalEntity = figiBondNominalMap.get(figi);
+        BondNominalValueEntity bondNominalEntity = instrumentIdBondNominalMap.get(instrumentId);
         BigDecimal value = lastPrice.getPrice()
                 .multiply(bondNominalEntity.getNominalValue())
                 .divide(BigDecimal.valueOf(100), MathContext.UNLIMITED);
