@@ -7,6 +7,7 @@ import com.github.it89.cfutils.marketdatastore.repositories.CandlesRepository;
 import com.github.it89.cfutils.marketdatastore.repositories.InstrumentsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -20,6 +21,7 @@ public class CandleValuesService {
     private final CandlesRepository candlesRepository;
     private final InstrumentsRepository instrumentsRepository;
 
+    @Transactional
     public SortedMap<Instant, BigDecimal> getValues(String figi) {
         InstrumentEntity instrumentEntity = instrumentsRepository.findFirstByFigi(figi)
                 .orElseThrow(InstrumentNotFoundException::new);

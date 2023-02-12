@@ -40,6 +40,7 @@ public class BondAciService {
         instrumentEntities.forEach(i -> upload(i, figiBondInfoMap.get(i.getFigi()), bondAciEntityMap));
     }
 
+    @Transactional
     public Map<Instrument, AmountInfo> getAmount(Set<String> figiSet) {
         Set<Long> instrumentIds = instrumentsRepository.findAllByFigiIn(figiSet).stream()
                 .map(InstrumentEntity::getId)
