@@ -7,7 +7,9 @@ import com.github.it89.cfutils.marketdatastore.models.Candle;
 import com.github.it89.cfutils.marketdatastore.repositories.CandlesRepository;
 import com.github.it89.cfutils.marketdatastore.repositories.InstrumentsRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.transaction.Transactional;
 import java.time.Duration;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CandlesService {
     private final CandlesRepository candlesRepository;
     private final InstrumentsRepository instrumentsRepository;
@@ -39,15 +42,20 @@ public class CandlesService {
     private List<CandleEntity> getEntityList(InstrumentEntity instrumentEntity,
                                              List<Candle> candles,
                                              Duration duration) {
-        Instant openTimeFrom = candles.stream()
-                .map(Candle::getOpenTime)
-                .min(Instant::compareTo).orElse(null);
-        Instant openTimeTo = candles.stream()
-                .map(Candle::getOpenTime)
-                .max(Instant::compareTo).orElse(null);
+        if (!CollectionUtils.isEmpty(candles)) {
+            Instant openTimeFrom = candles.stream()
+                    .map(Candle::getOpenTime)
+                    .min(Instant::compareTo).orElse(null);
+            Instant openTimeTo = candles.stream()
+                    .map(Candle::getOpenTime)
+                    .max(Instant::compareTo).orElse(null);
 
-        return candlesRepository.getAllByInstrumentAndDurationAndOpenTimeBetween(
-                instrumentEntity, duration, openTimeFrom, openTimeTo);
+            return candlesRepository.getAllByInstrumentAndDurationAndOpenTimeBetween(
+                    instrumentEntity, duration, openTimeFrom, openTimeTo);
+        } else {
+            log.info("No candles for {} (figi={})", instrumentEntity.getTicker(), instrumentEntity.getFigi());
+            return List.of();
+        }
     }
 
     private CandleEntity updateEntity(InstrumentEntity instrumentEntity,
