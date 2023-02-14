@@ -1,11 +1,9 @@
 package com.github.it89.cfutils.marketdatastore.services;
 
-import com.github.it89.cfutils.marketdatastore.converters.InstrumentConverter;
 import com.github.it89.cfutils.marketdatastore.entities.BondAciValuesEntity;
 import com.github.it89.cfutils.marketdatastore.entities.InstrumentEntity;
 import com.github.it89.cfutils.marketdatastore.models.AmountInfo;
 import com.github.it89.cfutils.marketdatastore.models.BondInfo;
-import com.github.it89.cfutils.marketdatastore.models.Instrument;
 import com.github.it89.cfutils.marketdatastore.models.MonetaryAmount;
 import com.github.it89.cfutils.marketdatastore.repositories.BondAciRepository;
 import com.github.it89.cfutils.marketdatastore.repositories.InstrumentsRepository;
@@ -41,14 +39,14 @@ public class BondAciService {
     }
 
     @Transactional
-    public Map<Instrument, AmountInfo> getAmount(Set<String> figiSet) {
+    public Map<String, AmountInfo> getAmount(Set<String> figiSet) {
         Set<Long> instrumentIds = instrumentsRepository.findAllByFigiIn(figiSet).stream()
                 .map(InstrumentEntity::getId)
                 .collect(Collectors.toSet());
 
         return bondAciRepository.getLastAciValues(instrumentIds).stream()
                 .collect(Collectors.toUnmodifiableMap(
-                                it -> InstrumentConverter.entityToDto(it.getInstrument()),
+                                it -> it.getInstrument().getFigi(),
                                 v -> new AmountInfo(new MonetaryAmount(v.getAciValue(), v.getCurrency()), v.getTime())
                         )
                 );

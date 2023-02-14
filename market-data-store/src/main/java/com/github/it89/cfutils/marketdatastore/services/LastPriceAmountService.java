@@ -1,11 +1,9 @@
 package com.github.it89.cfutils.marketdatastore.services;
 
-import com.github.it89.cfutils.marketdatastore.converters.InstrumentConverter;
 import com.github.it89.cfutils.marketdatastore.entities.BondNominalValueEntity;
 import com.github.it89.cfutils.marketdatastore.entities.InstrumentEntity;
 import com.github.it89.cfutils.marketdatastore.entities.LastPriceEntity;
 import com.github.it89.cfutils.marketdatastore.models.AmountInfo;
-import com.github.it89.cfutils.marketdatastore.models.Instrument;
 import com.github.it89.cfutils.marketdatastore.models.InstrumentType;
 import com.github.it89.cfutils.marketdatastore.models.MonetaryAmount;
 import com.github.it89.cfutils.marketdatastore.repositories.BondNominalRepository;
@@ -34,7 +32,7 @@ public class LastPriceAmountService {
     private final BondNominalRepository bondNominalRepository;
 
     @Transactional
-    public Map<Instrument, AmountInfo> getAmount(Set<String> figiSet) {
+    public Map<String, AmountInfo> getAmount(Set<String> figiSet) {
         List<InstrumentEntity> instrumentEntities = instrumentsRepository.findAllByFigiIn(figiSet);
 
         Set<Long> instrumentIds = instrumentEntities.stream()
@@ -49,9 +47,9 @@ public class LastPriceAmountService {
                 bondNominalRepository.getLastNominalValues(instrumentIds).stream()
                         .collect(Collectors.toUnmodifiableMap(k -> k.getInstrument().getId(), v -> v));
 
-        Map<Instrument, AmountInfo> result = new HashMap<>();
+        Map<String, AmountInfo> result = new HashMap<>();
         instrumentEntities.forEach(it -> result.put(
-                InstrumentConverter.entityToDto(it),
+                it.getFigi(),
                 getMonetaryAmount(it, lastPriceMap, bondNominalMap)));
 
         return result;

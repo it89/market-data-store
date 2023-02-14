@@ -1,7 +1,6 @@
 package com.github.it89.cfutils.marketdatastore.controllers;
 
 import com.github.it89.cfutils.marketdatastore.models.AmountInfo;
-import com.github.it89.cfutils.marketdatastore.models.Instrument;
 import com.github.it89.cfutils.marketdatastore.models.PriceInfo;
 import com.github.it89.cfutils.marketdatastore.services.LastPriceAmountService;
 import com.github.it89.cfutils.marketdatastore.services.LastPriceService;
@@ -30,7 +29,7 @@ public class LastPricesController {
     }
 
     @PostMapping("/getAmount")
-    public Map<Instrument, AmountInfo> getAmount(@RequestBody Set<String> figiSet) {
+    public Map<String, AmountInfo> getAmount(@RequestBody Set<String> figiSet) {
         return lastPriceAmountService.getAmount(figiSet);
     }
 }
