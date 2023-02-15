@@ -11,11 +11,11 @@ import java.util.Set;
 @Repository
 public interface BondNominalRepository extends CrudRepository<BondNominalValueEntity, Long> {
 
-    @Query(value = "select t.id, t.figi, t.nominal_value, t.currency, t.time " +
-            "from (select t.*, row_number() over (partition by t.figi order by t.time desc) rn " +
+    @Query(value = "select t.id, t.instrument_id, t.nominal_value, t.currency, t.time " +
+            "from (select t.*, row_number() over (partition by t.instrument_id order by t.time desc) rn " +
             "      from bond_nominal_values t " +
-            "      where t.figi in (:figiSet)) t " +
+            "      where t.instrument_id in (:instrumentIds)) t " +
             "where t.rn = 1",
             nativeQuery = true)
-    List<BondNominalValueEntity> getLastNominalValues(Set<String> figiSet);
+    List<BondNominalValueEntity> getLastNominalValues(Set<Long> instrumentIds);
 }
