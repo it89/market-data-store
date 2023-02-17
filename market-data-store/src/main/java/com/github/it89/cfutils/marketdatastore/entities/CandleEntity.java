@@ -39,4 +39,8 @@ public class CandleEntity {
     private BigDecimal close;
     private boolean isComplete;
     private Duration duration;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "source_id")
+    private SourceEntity source;
 }

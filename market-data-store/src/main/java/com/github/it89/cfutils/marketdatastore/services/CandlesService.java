@@ -2,6 +2,7 @@ package com.github.it89.cfutils.marketdatastore.services;
 
 import com.github.it89.cfutils.marketdatastore.entities.CandleEntity;
 import com.github.it89.cfutils.marketdatastore.entities.InstrumentEntity;
+import com.github.it89.cfutils.marketdatastore.entities.SourceEntity;
 import com.github.it89.cfutils.marketdatastore.exceptions.InstrumentNotFoundException;
 import com.github.it89.cfutils.marketdatastore.models.Candle;
 import com.github.it89.cfutils.marketdatastore.repositories.CandlesRepository;
@@ -24,16 +25,19 @@ import java.util.stream.Collectors;
 public class CandlesService {
     private final CandlesRepository candlesRepository;
     private final InstrumentsRepository instrumentsRepository;
+    private final SourcesService sourcesService;
 
     @Transactional
-    public void upload(String figi, List<Candle> candles, Duration duration) {
+    public void upload(String figi, List<Candle> candles, Duration duration, String source) {
+        SourceEntity sourceEntity = sourcesService.register(source);
+
         InstrumentEntity instrumentEntity = instrumentsRepository.findFirstByFigi(figi)
                 .orElseThrow(InstrumentNotFoundException::new);
         Map<Instant, CandleEntity> entityMap = getEntityList(instrumentEntity, candles, duration).stream()
                 .collect(Collectors.toMap(CandleEntity::getOpenTime, v -> v));
 
         List<CandleEntity> updatedEntities = candles.stream()
-                .map(it -> updateEntity(instrumentEntity, it, entityMap, duration))
+                .map(it -> updateEntity(instrumentEntity, it, entityMap, duration, sourceEntity))
                 .collect(Collectors.toList());
 
         candlesRepository.saveAll(updatedEntities);
@@ -61,7 +65,8 @@ public class CandlesService {
     private CandleEntity updateEntity(InstrumentEntity instrumentEntity,
                                       Candle candle,
                                       Map<Instant, CandleEntity> entityMap,
-                                      Duration duration) {
+                                      Duration duration,
+                                      SourceEntity sourceEntity) {
         CandleEntity entity = entityMap.getOrDefault(
                 candle.getOpenTime(),
                 createEntity(instrumentEntity, candle, duration));
@@ -69,10 +74,13 @@ public class CandlesService {
         entity.setOpen(candle.getOpen());
         entity.setClose(candle.getClose());
         entity.setComplete(candle.isComplete());
+        entity.setSource(sourceEntity);
         return entity;
     }
 
-    private CandleEntity createEntity(InstrumentEntity instrumentEntity, Candle candle, Duration duration) {
+    private CandleEntity createEntity(InstrumentEntity instrumentEntity,
+                                      Candle candle,
+                                      Duration duration) {
         CandleEntity entity = new CandleEntity();
         entity.setOpenTime(candle.getOpenTime());
         entity.setInstrument(instrumentEntity);

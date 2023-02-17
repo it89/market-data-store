@@ -17,6 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class CandlesService {
+    private static final String SOURCE_CODE = "TCS";
+
     private final TcsMarketDataService tcsCandlesService;
     private final CandlesFeignClient candlesFeignClient;
 
@@ -28,6 +30,6 @@ public class CandlesService {
                 CandleInterval.CANDLE_INTERVAL_DAY);
 
         log.info("Save candles to market-data-store");
-        candlesFeignClient.upload(figi, candles, Duration.ofDays(1));
+        candlesFeignClient.upload(figi, candles, Duration.ofDays(1), SOURCE_CODE);
     }
 }
