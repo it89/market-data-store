@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,13 +21,12 @@ import java.util.List;
 import java.util.SortedMap;
 
 @RestController
-@RequestMapping("/candles")
 @RequiredArgsConstructor
 public class CandlesController {
     private final CandlesService candlesService;
     private final CandleValuesService candleValuesService;
 
-    @PostMapping("/{figi}/upload")
+    @PostMapping("/candles/{figi}/upload")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void uploadDayCandles(@PathVariable String figi,
                                  @RequestBody List<Candle> candles,
@@ -37,7 +35,16 @@ public class CandlesController {
         candlesService.upload(figi, candles, duration, source);
     }
 
-    @GetMapping("/{figi}/values")
+    @PostMapping("/instruments/{id:\\d+}/candles/upload")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void uploadInstrumentDayCandles(@PathVariable("id") Long instrumentId,
+                                    @RequestBody List<Candle> candles,
+                                    @RequestParam Duration duration,
+                                    @RequestHeader(required = false) String source) {
+        candlesService.upload(instrumentId, candles, duration, source);
+    }
+
+    @GetMapping("/candles/{figi}/values")
     public SortedMap<Instant, BigDecimal> getValues(@PathVariable String figi) {
         return candleValuesService.getValues(figi);
     }

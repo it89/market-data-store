@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Repository
-public interface InstrumentsRepository extends CrudRepository<InstrumentEntity, String> {
+public interface InstrumentsRepository extends CrudRepository<InstrumentEntity, Long> {
     List<InstrumentEntity> findAllByFigiIn(Set<String> figiSet);
     List<InstrumentEntity> findAllByIsinIn(Set<String> isinSet);
     Optional<InstrumentEntity> findFirstByFigi(String figi);

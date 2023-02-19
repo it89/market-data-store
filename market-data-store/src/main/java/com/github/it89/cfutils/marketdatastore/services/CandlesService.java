@@ -29,10 +29,23 @@ public class CandlesService {
 
     @Transactional
     public void upload(String figi, List<Candle> candles, Duration duration, String source) {
-        SourceEntity sourceEntity = sourcesService.register(source);
-
         InstrumentEntity instrumentEntity = instrumentsRepository.findFirstByFigi(figi)
                 .orElseThrow(InstrumentNotFoundException::new);
+
+        upload(instrumentEntity, candles, duration, source);
+    }
+
+    @Transactional
+    public void upload(Long instrumentId, List<Candle> candles, Duration duration, String source) {
+        InstrumentEntity instrumentEntity = instrumentsRepository.findById(instrumentId)
+                .orElseThrow(InstrumentNotFoundException::new);
+
+        upload(instrumentEntity, candles, duration, source);
+    }
+
+    private void upload(InstrumentEntity instrumentEntity, List<Candle> candles, Duration duration, String source) {
+        SourceEntity sourceEntity = sourcesService.register(source);
+
         Map<Instant, CandleEntity> entityMap = getEntityList(instrumentEntity, candles, duration).stream()
                 .collect(Collectors.toMap(CandleEntity::getOpenTime, v -> v));
 
