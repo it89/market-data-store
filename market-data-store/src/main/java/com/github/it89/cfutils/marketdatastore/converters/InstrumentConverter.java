@@ -8,6 +8,7 @@ import lombok.experimental.UtilityClass;
 public class InstrumentConverter {
     public static Instrument entityToDto(InstrumentEntity entity) {
         return Instrument.builder()
+                .id(entity.getId())
                 .figi(entity.getFigi())
                 .isin(entity.getIsin())
                 .ticker(entity.getTicker())

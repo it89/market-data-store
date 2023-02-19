@@ -31,4 +31,15 @@ public class CandleValuesService {
 
         return new TreeMap<>(map);
     }
+
+    @Transactional
+    public SortedMap<Instant, BigDecimal> getValues(Long instrumentId) {
+        InstrumentEntity instrumentEntity = instrumentsRepository.findById(instrumentId)
+                .orElseThrow(InstrumentNotFoundException::new);
+
+        var map = candlesRepository.getAllByInstrument(instrumentEntity).stream()
+                .collect(Collectors.toMap(CandleEntity::getOpenTime, CandleEntity::getOpen));
+
+        return new TreeMap<>(map);
+    }
 }

@@ -8,6 +8,7 @@ import java.util.Currency;
 @Data
 @Builder
 public class Instrument {
+    private Long id;
     private String figi;
     private String isin;
     private String ticker;
