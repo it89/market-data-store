@@ -44,8 +44,13 @@ public class CandlesController {
         candlesService.upload(instrumentId, candles, duration, source);
     }
 
+    @GetMapping("/instruments/{id:\\d+}/candles/values")
+    public SortedMap<Instant, BigDecimal> getValues(@PathVariable("id") Long instrumentId) {
+        return candleValuesService.getValues(instrumentId);
+    }
+
     @GetMapping("/candles/{figi}/values")
-    public SortedMap<Instant, BigDecimal> getValues(@PathVariable String figi) {
+    public SortedMap<Instant, BigDecimal> getValuesByFigi(@PathVariable String figi) {
         return candleValuesService.getValues(figi);
     }
 }
