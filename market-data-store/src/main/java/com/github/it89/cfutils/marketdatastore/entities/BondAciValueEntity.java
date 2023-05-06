@@ -22,7 +22,7 @@ import java.util.Currency;
 @Entity
 @Table(name = "bond_aci_values",
         uniqueConstraints = {@UniqueConstraint(name = "bond_aci_values_ui", columnNames = {"time", "instrument_id"})})
-public class BondAciValuesEntity {
+public class BondAciValueEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
