@@ -7,12 +7,12 @@ import com.github.it89.cfutils.marketdatastore.exceptions.InstrumentNotFoundExce
 import com.github.it89.cfutils.marketdatastore.models.Candle;
 import com.github.it89.cfutils.marketdatastore.repositories.CandlesRepository;
 import com.github.it89.cfutils.marketdatastore.repositories.InstrumentsRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
