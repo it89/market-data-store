@@ -10,10 +10,10 @@ import com.github.it89.cfutils.marketdatastore.models.IndexInfo;
 import com.github.it89.cfutils.marketdatastore.models.IndexValue;
 import com.github.it89.cfutils.marketdatastore.repositories.IndexInfoRepository;
 import com.github.it89.cfutils.marketdatastore.repositories.IndexValueRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;

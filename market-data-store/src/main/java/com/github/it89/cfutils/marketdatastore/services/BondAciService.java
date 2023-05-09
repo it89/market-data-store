@@ -1,6 +1,6 @@
 package com.github.it89.cfutils.marketdatastore.services;
 
-import com.github.it89.cfutils.marketdatastore.entities.BondAciValuesEntity;
+import com.github.it89.cfutils.marketdatastore.entities.BondAciValueEntity;
 import com.github.it89.cfutils.marketdatastore.entities.InstrumentEntity;
 import com.github.it89.cfutils.marketdatastore.models.AmountInfo;
 import com.github.it89.cfutils.marketdatastore.models.BondInfo;
@@ -32,7 +32,7 @@ public class BondAciService {
                 .map(InstrumentEntity::getId)
                 .collect(Collectors.toSet());
 
-        Map<Long, BondAciValuesEntity> bondAciEntityMap = bondAciRepository.getLastAciValues(instrumentIds).stream()
+        Map<Long, BondAciValueEntity> bondAciEntityMap = bondAciRepository.getLastAciValues(instrumentIds).stream()
                 .collect(Collectors.toUnmodifiableMap(k -> k.getInstrument().getId(), v -> v));
 
         instrumentEntities.forEach(i -> upload(i, figiBondInfoMap.get(i.getFigi()), bondAciEntityMap));
@@ -54,7 +54,7 @@ public class BondAciService {
 
     private void upload(InstrumentEntity instrumentEntity,
                         BondInfo bondInfo, Map<Long,
-            BondAciValuesEntity> bondAciEntityMap) {
+            BondAciValueEntity> bondAciEntityMap) {
         if (bondAciEntityMap.containsKey(instrumentEntity.getId())) {
             update(bondAciEntityMap.get(instrumentEntity.getId()), bondInfo);
         } else {
@@ -62,7 +62,7 @@ public class BondAciService {
         }
     }
 
-    private void update(BondAciValuesEntity entity, BondInfo bondInfo) {
+    private void update(BondAciValueEntity entity, BondInfo bondInfo) {
         if (bondInfo.getTime().isBefore(entity.getTime())) {
             log.warn("Last time={} for instrument ID={} is before then current time={}",
                     bondInfo.getTime(), entity.getInstrument().getId(), entity.getTime());
@@ -82,7 +82,7 @@ public class BondAciService {
     }
 
     private void create(InstrumentEntity instrumentEntity, BondInfo bondInfo) {
-        BondAciValuesEntity entity = new BondAciValuesEntity();
+        BondAciValueEntity entity = new BondAciValueEntity();
         entity.setInstrument(instrumentEntity);
         entity.setAciValue(bondInfo.getAciValue());
         entity.setCurrency(bondInfo.getAciCurrency());
